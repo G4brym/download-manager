@@ -26,7 +26,7 @@ app.logger.setLevel(logging.INFO)
 LOCAL_PATH = os.path.dirname(os.path.realpath(__file__))
 DOWNLOADS_PATH = os.environ.get("DOWNLOADS_PATH", LOCAL_PATH)
 TMP_PATH = "/tmp/downloader/"
-DATABASE = os.environ.get("DB_LOC", "database.db")
+DATABASE = "db.sqlite3"
 API_KEY = os.environ.get("API_KEY", "debug")
 
 

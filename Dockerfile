@@ -1,17 +1,39 @@
-FROM python:3.6.8-alpine
+FROM lsiobase/alpine:3.11
 LABEL maintainer="G4brym"
 
-ENV DB_LOC=/config/db.sqlite3
+RUN \
+ echo "**** install build packages ****" && \
+ apk add --no-cache --upgrade --virtual=build-dependencies \
+	curl \
+	git \
+	musl-dev \
+	py3-pip \
+	python3-dev \
+	zlib-dev && \
+ echo "**** install runtime packages ****" && \
+ apk add --no-cache --upgrade \
+	uwsgi \
+	uwsgi-python && \
+ echo "**** install download-manager ****"
+
+ COPY . /app/downloads
+
+ RUN echo "**** install pip packages ****" && \
+ cd /app/downloads && \
+ pip3 install --no-cache-dir -r requirements.txt && \
+ echo "**** cleanup ****" && \
+ apk del --purge \
+	build-dependencies && \
+ rm -rf \
+	/root/.cache \
+	/tmp/*
+
 ENV DOWNLOADS_PATH=/downloads
 
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install -r requirements.txt
+# copy local files
+COPY root/ /
 
-COPY . .
-
+# ports and volumes
+EXPOSE 8000
 VOLUME /config
 VOLUME /downloads
-
-EXPOSE 8000
-CMD [ "gunicorn", "manager:app", "-b 0.0.0.0:8000" ]

@@ -1,0 +1,16 @@
+#!/usr/bin/with-contenv bash
+
+# set default values for variables
+DOWNLOADS_PATH=/downloads
+
+if [ ! -f "/app/downloads/db.sqlite3" ]; then
+	ln -s /config/db.sqlite3 /app/downloads/db.sqlite3
+fi
+
+mv /defaults/uwsgi.ini /app/downloads/uwsgi.ini > /dev/null 2>&1
+
+# permissions
+chown -R abc:abc \
+	/app/downloads \
+	/config \
+	/downloads
