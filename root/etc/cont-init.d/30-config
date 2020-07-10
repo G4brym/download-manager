@@ -1,8 +1,5 @@
 #!/usr/bin/with-contenv bash
 
-# set default values for variables
-DOWNLOADS_PATH=/downloads
-
 if [ ! -f "/app/downloads/db.sqlite3" ]; then
 	ln -s /config/db.sqlite3 /app/downloads/db.sqlite3
 fi

@@ -28,8 +28,6 @@ RUN \
 	/root/.cache \
 	/tmp/*
 
-ENV DOWNLOADS_PATH=/downloads
-
 # copy local files
 COPY root/ /
 
