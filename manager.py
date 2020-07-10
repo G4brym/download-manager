@@ -1,5 +1,6 @@
 import atexit
 import hashlib
+import logging
 import os
 import sqlite3
 from urllib.error import HTTPError, URLError
@@ -9,9 +10,22 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from flask import jsonify, request, g
 from pySmartDL import SmartDL
 
-DATABASE = 'database.db'
+
+class NoRunningFilter(logging.Filter):
+    def filter(self, record):
+        return not record.msg.startswith("Execution of job")
+
+
+logging.getLogger("apscheduler.scheduler").addFilter(NoRunningFilter())
+
 app = flask.Flask(__name__)
-local_path = os.path.dirname(os.path.realpath(__file__))
+app.logger.setLevel(logging.INFO)
+
+LOCAL_PATH = os.path.dirname(os.path.realpath(__file__))
+DATABASE = os.environ.get("DB_LOC", "database.db")
+DOWNLOADS_PATH = os.environ.get("DOWNLOADS_PATH", LOCAL_PATH)
+API_KEY = os.environ.get("API_KEY", "debug")
+
 
 scheduler = BackgroundScheduler()
 scheduler.start()
@@ -26,20 +40,25 @@ def download_scheduled_files():
     if not file_to_download:
         return
 
-    destination_path = os.path.join(local_path, file_to_download["path"], file_to_download["name"])
+    destination_path = os.path.join(DOWNLOADS_PATH, file_to_download["path"], file_to_download["name"])
 
     try:
-        obj = SmartDL(file_to_download["url"], destination_path, progress_bar=True)
+        app.logger.info("Starting download file {}".format(file_to_download["name"]))
+        obj = SmartDL(file_to_download["url"], destination_path, progress_bar=False)
         obj.start()
+        app.logger.info("Download Finished")
     except HTTPError:
         with app.app_context():
             execute_db("UPDATE downloads SET failed = 1 WHERE hash = ?", [file_to_download["hash"]], commit=True)
+        app.logger.warning("Download Failed with error 1")
     except URLError:
         with app.app_context():
             execute_db("UPDATE downloads SET failed = 2 WHERE hash = ?", [file_to_download["hash"]], commit=True)
+        app.logger.warning("Download Failed with error 2")
     except IOError:
         with app.app_context():
             execute_db("UPDATE downloads SET failed = 3 WHERE hash = ?", [file_to_download["hash"]], commit=True)
+        app.logger.warning("Download Failed with error 3")
     finally:
         with app.app_context():
             execute_db("UPDATE downloads SET completed = 1 WHERE hash = ?", [file_to_download["hash"]], commit=True)
@@ -91,6 +110,9 @@ def api_index():
 
 @app.route('/api/v1/download', methods=['POST'])
 def api_download():
+    if request.args.get('key') != API_KEY:
+        return jsonify({}), 401
+
     data = request.get_json()
     result = []
 
@@ -158,7 +180,8 @@ def download_status(hash):
     })
 
 
+# Create table on boot
+init_db()
+
 if __name__ == '__main__':
-    # Create table on boot
-    init_db()
     app.run()
