@@ -2,7 +2,9 @@ import atexit
 import hashlib
 import logging
 import os
+import shutil
 import sqlite3
+import uuid
 from urllib.error import HTTPError, URLError
 
 import flask
@@ -22,8 +24,9 @@ app = flask.Flask(__name__)
 app.logger.setLevel(logging.INFO)
 
 LOCAL_PATH = os.path.dirname(os.path.realpath(__file__))
-DATABASE = os.environ.get("DB_LOC", "database.db")
 DOWNLOADS_PATH = os.environ.get("DOWNLOADS_PATH", LOCAL_PATH)
+TMP_PATH = "/tmp/downloader/"
+DATABASE = os.environ.get("DB_LOC", "database.db")
 API_KEY = os.environ.get("API_KEY", "debug")
 
 
@@ -40,28 +43,36 @@ def download_scheduled_files():
     if not file_to_download:
         return
 
+    tmp_folder = os.path.join(TMP_PATH, uuid.uuid4().hex)
+    tmp_path = os.path.join(tmp_folder, file_to_download["name"])
     destination_path = os.path.join(DOWNLOADS_PATH, file_to_download["path"], file_to_download["name"])
 
     try:
         app.logger.info("Starting download file {}".format(file_to_download["name"]))
-        obj = SmartDL(file_to_download["url"], destination_path, progress_bar=False)
+        obj = SmartDL(file_to_download["url"], tmp_path, progress_bar=False)
         obj.start()
         app.logger.info("Download Finished")
     except HTTPError:
         with app.app_context():
             execute_db("UPDATE downloads SET failed = 1 WHERE hash = ?", [file_to_download["hash"]], commit=True)
+        shutil.rmtree(tmp_folder)
         app.logger.warning("Download Failed with error 1")
     except URLError:
         with app.app_context():
             execute_db("UPDATE downloads SET failed = 2 WHERE hash = ?", [file_to_download["hash"]], commit=True)
+        shutil.rmtree(tmp_folder)
         app.logger.warning("Download Failed with error 2")
     except IOError:
         with app.app_context():
             execute_db("UPDATE downloads SET failed = 3 WHERE hash = ?", [file_to_download["hash"]], commit=True)
+        shutil.rmtree(tmp_folder)
         app.logger.warning("Download Failed with error 3")
     finally:
         with app.app_context():
             execute_db("UPDATE downloads SET completed = 1 WHERE hash = ?", [file_to_download["hash"]], commit=True)
+
+        os.makedirs(os.path.dirname(destination_path), exist_ok=True)
+        shutil.move(tmp_path, destination_path)
 
 
 def query_db(query, args=(), one=False):
@@ -162,6 +173,15 @@ def api_download():
     return jsonify({
         "downloads": result
     })
+
+
+@app.route('/api/v1/download/retry', methods=['post'])
+def download_retry():
+    if request.args.get('key') != API_KEY:
+        return jsonify({}), 401
+
+    execute_db("UPDATE downloads SET failed = 0 WHERE failed <> 0 AND completed = 0", commit=True)
+    return jsonify({"status": "ok"})
 
 
 @app.route('/api/v1/download/<hash>', methods=['GET'])
