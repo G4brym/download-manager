@@ -8,12 +8,6 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
-RUN mkdir -m 777 /config
-RUN mkdir -m 777 /downloads
-
-RUN addgroup -S appgroup -g 1000 && adduser -S appuser -G appgroup -u 1000
-USER appuser
-
 COPY . .
 
 VOLUME /config

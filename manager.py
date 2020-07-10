@@ -71,7 +71,7 @@ def download_scheduled_files():
         with app.app_context():
             execute_db("UPDATE downloads SET completed = 1 WHERE hash = ?", [file_to_download["hash"]], commit=True)
 
-        os.makedirs(os.path.dirname(destination_path), exist_ok=True)
+        os.makedirs(destination_path, exist_ok=True)
         shutil.move(tmp_path, destination_path)
 
 
