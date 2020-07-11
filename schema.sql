@@ -5,5 +5,6 @@ CREATE TABLE IF NOT EXISTS downloads
     path TEXT NOT NULL,
     url TEXT NOT NULL,
     failed INTEGER DEFAULT 0,
-    completed INTEGER DEFAULT 0
+    completed INTEGER DEFAULT 0,
+    retries INTEGER DEFAULT 0
 );

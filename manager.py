@@ -29,7 +29,6 @@ TMP_PATH = "/tmp/downloader/"
 DATABASE = "db.sqlite3"
 API_KEY = os.environ.get("API_KEY", "debug")
 
-
 scheduler = BackgroundScheduler()
 scheduler.start()
 atexit.register(lambda: scheduler.shutdown())
@@ -38,7 +37,7 @@ atexit.register(lambda: scheduler.shutdown())
 @scheduler.scheduled_job(trigger="interval", seconds=10, max_instances=1)
 def download_scheduled_files():
     with app.app_context():
-        file_to_download = query_db('SELECT * FROM downloads WHERE completed = 0 AND failed = 0 LIMIT 1', one=True)
+        file_to_download = query_db('SELECT * FROM downloads WHERE completed = 0 AND retries < 5 LIMIT 1', one=True)
 
     if not file_to_download:
         return
@@ -61,17 +60,20 @@ def download_scheduled_files():
         app.logger.info("Download Finished")
     except HTTPError:
         with app.app_context():
-            execute_db("UPDATE downloads SET failed = 1 WHERE hash = ?", [file_to_download["hash"]], commit=True)
+            execute_db("UPDATE downloads SET failed = 1 AND retries = retries + 1 WHERE hash = ?",
+                       [file_to_download["hash"]], commit=True)
         shutil.rmtree(tmp_folder)
         app.logger.warning("Download Failed with error 1")
     except URLError:
         with app.app_context():
-            execute_db("UPDATE downloads SET failed = 2 WHERE hash = ?", [file_to_download["hash"]], commit=True)
+            execute_db("UPDATE downloads SET failed = 2 AND retries = retries + 1 WHERE hash = ?",
+                       [file_to_download["hash"]], commit=True)
         shutil.rmtree(tmp_folder)
         app.logger.warning("Download Failed with error 2")
     except IOError:
         with app.app_context():
-            execute_db("UPDATE downloads SET failed = 3 WHERE hash = ?", [file_to_download["hash"]], commit=True)
+            execute_db("UPDATE downloads SET failed = 3 AND retries = retries + 1 WHERE hash = ?",
+                       [file_to_download["hash"]], commit=True)
         shutil.rmtree(tmp_folder)
         app.logger.warning("Download Failed with error 3")
 
