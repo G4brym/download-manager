@@ -26,7 +26,7 @@ app.logger.setLevel(logging.INFO)
 LOCAL_PATH = os.path.dirname(os.path.realpath(__file__))
 DOWNLOADS_PATH = "/downloads"
 TMP_PATH = "/tmp/downloader/"
-DATABASE = "db.sqlite3"
+DATABASE = "config/db.sqlite3"
 API_KEY = os.environ.get("API_KEY", "debug")
 
 scheduler = BackgroundScheduler()

@@ -13,7 +13,7 @@ docker create \
   -e PUID=1000 \
   -e PGID=1000 \
   -e API_KEY=some_random_key \
-  -v /path/to/config:/config \
+  -v /path/to/config:/app/config \
   -v /path/to/downloads:/downloads \
   --restart unless-stopped \
   g4brym/download-manager
@@ -37,7 +37,7 @@ services:
       - PGID=1000
       - API_KEY=some_random_key
     volumes:
-      - /path/to/config:/config
+      - /path/to/config:/app/config
       - /path/to/downloads:/downloads
     restart: unless-stopped
 ```
@@ -52,7 +52,7 @@ Container images are configured using parameters passed at runtime (such as thos
 | `-e PUID=1000` | for UserID - see below for explanation |
 | `-e PGID=1000` | for GroupID - see below for explanation |
 | `-e API_KEY=some_random_key` | Api key to interact with the server |
-| `-v /config` | Contains all configuration and generated files for the application to run, including the sqlite db |
+| `-v /app/config` | Contains all configuration and generated files for the application to run, including the sqlite db |
 | `-v /downloads` | Where your completed downloads should go |
 
 
