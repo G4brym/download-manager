@@ -5,6 +5,7 @@ import os
 import shutil
 import sqlite3
 import uuid
+from pathlib import Path
 from urllib.error import HTTPError, URLError
 
 import flask
@@ -24,7 +25,7 @@ app = flask.Flask(__name__)
 app.logger.setLevel(logging.INFO)
 
 LOCAL_PATH = os.path.dirname(os.path.realpath(__file__))
-DOWNLOADS_PATH = "/downloads"
+DOWNLOADS_PATH = os.environ.get("DOWNLOADS_PATH", "/downloads")
 TMP_PATH = "/tmp/downloader/"
 DATABASE = "config/db.sqlite3"
 API_KEY = os.environ.get("API_KEY", "debug")
@@ -51,28 +52,28 @@ def download_scheduled_files():
         obj = SmartDL(file_to_download["url"], tmp_path, progress_bar=False)
         obj.start()
 
-        with app.app_context():
-            execute_db("UPDATE downloads SET completed = 1 WHERE hash = ?", [file_to_download["hash"]], commit=True)
-
         os.makedirs(destination_path, exist_ok=True)
         shutil.move(tmp_path, destination_path)
+
+        with app.app_context():
+            execute_db("UPDATE downloads SET completed = 1 WHERE hash = ?", [file_to_download["hash"]], commit=True)
 
         app.logger.info("Download Finished")
     except HTTPError:
         with app.app_context():
-            execute_db("UPDATE downloads SET failed = 1 AND retries = retries + 1 WHERE hash = ?",
+            execute_db("UPDATE downloads SET failed = 1, retries = retries + 1 WHERE hash = ?",
                        [file_to_download["hash"]], commit=True)
         shutil.rmtree(tmp_folder)
         app.logger.warning("Download Failed with error 1")
     except URLError:
         with app.app_context():
-            execute_db("UPDATE downloads SET failed = 2 AND retries = retries + 1 WHERE hash = ?",
+            execute_db("UPDATE downloads SET failed = 2, retries = retries + 1 WHERE hash = ?",
                        [file_to_download["hash"]], commit=True)
         shutil.rmtree(tmp_folder)
         app.logger.warning("Download Failed with error 2")
     except IOError:
         with app.app_context():
-            execute_db("UPDATE downloads SET failed = 3 AND retries = retries + 1 WHERE hash = ?",
+            execute_db("UPDATE downloads SET failed = 3, retries = retries + 1 WHERE hash = ?",
                        [file_to_download["hash"]], commit=True)
         shutil.rmtree(tmp_folder)
         app.logger.warning("Download Failed with error 3")
@@ -93,6 +94,9 @@ def execute_db(query, args=(), commit=False):
 
 
 def init_db():
+    db_folder = "/".join(DATABASE.split("/")[:-1])
+    Path(os.path.join(LOCAL_PATH, db_folder)).mkdir(parents=True, exist_ok=True)
+
     with app.app_context():
         db = get_db()
         with app.open_resource('schema.sql', mode='r') as f:
@@ -146,10 +150,13 @@ def api_download():
         # File hash
         hash = hashlib.md5((link["path"] + link["name"]).encode("utf-8")).hexdigest()
 
+        download_final_path = os.path.join(DOWNLOADS_PATH, link["path"], link["name"])
+        download_exists = os.path.exists(download_final_path)
+
         try:
             # Schedule download
-            execute_db('INSERT INTO downloads (hash, name, path, url) VALUES (?, ?, ?, ?)', [
-                hash, link["name"], link["path"], link["url"]
+            execute_db('INSERT INTO downloads (hash, name, path, url, completed) VALUES (?, ?, ?, ?, ?)', [
+                hash, link["name"], link["path"], link["url"], download_exists
             ])
         except sqlite3.IntegrityError:
             # File already scheduled, returning current state
