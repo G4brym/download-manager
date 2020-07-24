@@ -144,7 +144,16 @@ The `failed` number corresponds to a given error id, following the next schema:
  3. Local IO problems (maybe no disk space available)
 
 
-#### Retry failed downloads
+#### Retry a single failed download 
+To retry a single failed download send an `POST` to `/api/v1/download/<hash>`, and you will get the following response:
+```json
+{
+  "status": "ok"
+}
+```
+
+
+#### Retry all failed downloads
 To retry all the failed and non completed downloads, just send a `POST` to `/api/v1/download/retry?key=debug`,
 the server should respond with this:
 ```json

@@ -29,6 +29,7 @@ DOWNLOADS_PATH = os.environ.get("DOWNLOADS_PATH", "/downloads")
 TMP_PATH = "/tmp/downloader/"
 DATABASE = "config/db.sqlite3"
 API_KEY = os.environ.get("API_KEY", "debug")
+MAX_RETRIES = int(os.environ.get("MAX_RETRIES", 10))
 
 scheduler = BackgroundScheduler()
 scheduler.start()
@@ -38,7 +39,7 @@ atexit.register(lambda: scheduler.shutdown())
 @scheduler.scheduled_job(trigger="interval", seconds=10, max_instances=1)
 def download_scheduled_files():
     with app.app_context():
-        file_to_download = query_db('SELECT * FROM downloads WHERE completed = 0 AND retries < 5 LIMIT 1', one=True)
+        file_to_download = query_db('SELECT * FROM downloads WHERE completed = 0 AND retries < MAX_RETRIES LIMIT 1', one=True)
 
     if not file_to_download:
         return
@@ -191,6 +192,19 @@ def download_retry():
         return jsonify({}), 401
 
     execute_db("UPDATE downloads SET failed = 0 WHERE failed <> 0 AND completed = 0", commit=True)
+    return jsonify({"status": "ok"})
+
+
+@app.route('/api/v1/download/<hash>', methods=['post'])
+def single_download_retry():
+    if request.args.get('key') != API_KEY:
+        return jsonify({}), 401
+
+    download = query_db('SELECT * FROM downloads WHERE hash = ?', [hash], one=True)
+    if not download:
+        return jsonify({}), 404
+
+    execute_db("UPDATE downloads SET failed = 0 WHERE hash = ?", [hash], commit=True)
     return jsonify({"status": "ok"})
 
 
