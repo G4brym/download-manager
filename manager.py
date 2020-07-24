@@ -39,7 +39,7 @@ atexit.register(lambda: scheduler.shutdown())
 @scheduler.scheduled_job(trigger="interval", seconds=10, max_instances=1)
 def download_scheduled_files():
     with app.app_context():
-        file_to_download = query_db('SELECT * FROM downloads WHERE completed = 0 AND retries < MAX_RETRIES LIMIT 1', one=True)
+        file_to_download = query_db('SELECT * FROM downloads WHERE completed = 0 AND retries < ? LIMIT 1', [MAX_RETRIES], one=True)
 
     if not file_to_download:
         return
