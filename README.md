@@ -162,6 +162,12 @@ the server should respond with this:
 }
 ```
 
+### Docker hub build commands
+```bash
+docker build --tag download-manager:latest .
+docker tag download-manager:latest g4brym/download-manager:latest
+docker push g4brym/download-manager:latest 
+```
 
 ## Credits
 

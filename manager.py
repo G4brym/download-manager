@@ -163,6 +163,9 @@ def api_download():
             # File already scheduled, returning current state
             _duplicated_file = query_db('SELECT * FROM downloads WHERE hash = ?', [hash], one=True)
 
+            if _duplicated_file["url"] != link["url"]:
+                execute_db("UPDATE downloads SET url = ?, failed = 0 WHERE hash = ?", [link["url"], hash])
+
             result.append({
                 "id": hash,
                 "name": link["name"],
@@ -196,7 +199,7 @@ def download_retry():
 
 
 @app.route('/api/v1/download/<hash>', methods=['post'])
-def single_download_retry():
+def single_download_retry(hash):
     if request.args.get('key') != API_KEY:
         return jsonify({}), 401
 
