@@ -1,6 +1,7 @@
 #!/usr/bin/with-contenv bash
 
-mv /defaults/uwsgi.ini /app/downloads/uwsgi.ini > /dev/null 2>&1
+mv /defaults/uwsgi.ini /app/downloads/uwsgi.ini
+echo "asd"
 
 # permissions
 chown -R abc:abc \

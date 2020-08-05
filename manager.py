@@ -164,7 +164,7 @@ def api_download():
             _duplicated_file = query_db('SELECT * FROM downloads WHERE hash = ?', [hash], one=True)
 
             if _duplicated_file["url"] != link["url"]:
-                execute_db("UPDATE downloads SET url = ?, failed = 0 WHERE hash = ?", [link["url"], hash])
+                execute_db("UPDATE downloads SET url = ?, failed = 0, retries = 0 WHERE hash = ?", [link["url"], hash])
 
             result.append({
                 "id": hash,
@@ -194,7 +194,7 @@ def download_retry():
     if request.args.get('key') != API_KEY:
         return jsonify({}), 401
 
-    execute_db("UPDATE downloads SET failed = 0 WHERE failed <> 0 AND completed = 0", commit=True)
+    execute_db("UPDATE downloads SET failed = 0, retries = 0 WHERE failed <> 0 AND completed = 0", commit=True)
     return jsonify({"status": "ok"})
 
 
@@ -207,7 +207,7 @@ def single_download_retry(hash):
     if not download:
         return jsonify({}), 404
 
-    execute_db("UPDATE downloads SET failed = 0 WHERE hash = ?", [hash], commit=True)
+    execute_db("UPDATE downloads SET failed = 0, retries = 0 WHERE hash = ?", [hash], commit=True)
     return jsonify({"status": "ok"})
 
 
