@@ -6,5 +6,6 @@ CREATE TABLE IF NOT EXISTS downloads
     url TEXT NOT NULL,
     failed INTEGER DEFAULT 0,
     completed INTEGER DEFAULT 0,
-    retries INTEGER DEFAULT 0
+    retries INTEGER DEFAULT 0,
+	headers TEXT DEFAULT '{}'
 );

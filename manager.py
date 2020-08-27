@@ -1,5 +1,6 @@
 import atexit
 import hashlib
+import json
 import logging
 import os
 import shutil
@@ -50,7 +51,7 @@ def download_scheduled_files():
 
     try:
         app.logger.info("Starting download file {}".format(file_to_download["name"]))
-        obj = SmartDL(file_to_download["url"], tmp_path, progress_bar=False)
+        obj = SmartDL(file_to_download["url"], tmp_path, progress_bar=False, request_args={"headers": json.loads(file_to_download["headers"])})
         obj.start()
 
         os.makedirs(destination_path, exist_ok=True)
@@ -139,6 +140,7 @@ def api_download():
         # Default values for optional parameters
         link.setdefault("name", link["url"].split("/")[-1])
         link.setdefault("path", "")
+        link.setdefault("headers", {})
 
         # Sanitize inputs
         if link["name"].startswith("/"):
@@ -148,6 +150,8 @@ def api_download():
         if not link["path"].endswith("/"):
             link["path"] = "{}/".format(link["path"])
 
+        headers = json.dumps(link["headers"])
+
         # File hash
         hash = hashlib.md5((link["path"] + link["name"]).encode("utf-8")).hexdigest()
 
@@ -156,15 +160,15 @@ def api_download():
 
         try:
             # Schedule download
-            execute_db('INSERT INTO downloads (hash, name, path, url, completed) VALUES (?, ?, ?, ?, ?)', [
-                hash, link["name"], link["path"], link["url"], download_exists
+            execute_db('INSERT INTO downloads (hash, name, path, url, completed, headers) VALUES (?, ?, ?, ?, ?, ?)', [
+                hash, link["name"], link["path"], link["url"], download_exists, headers
             ])
         except sqlite3.IntegrityError:
             # File already scheduled, returning current state
             _duplicated_file = query_db('SELECT * FROM downloads WHERE hash = ?', [hash], one=True)
 
-            if _duplicated_file["url"] != link["url"]:
-                execute_db("UPDATE downloads SET url = ?, failed = 0, retries = 0 WHERE hash = ?", [link["url"], hash])
+            if _duplicated_file["url"] != link["url"] or _duplicated_file["headers"] != headers:
+                execute_db("UPDATE downloads SET url = ?, headers = ?, failed = 0, retries = 0 WHERE hash = ?", [link["url"], headers, hash])
 
             result.append({
                 "id": hash,

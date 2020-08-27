@@ -91,7 +91,10 @@ To schedule a new download just make a `POST` request to `/api/v1/download?key=d
     {
       "url": "http://something.com/example.zip",
       "name": "output_file_name.zip",
-      "path": "something/folder/"
+      "path": "something/folder/",
+      "headers": {
+        "test": "header"
+      }
     }
   ]
 }
