@@ -1,4 +1,3 @@
-import atexit
 import hashlib
 import json
 import logging
@@ -9,6 +8,7 @@ import uuid
 from pathlib import Path
 from urllib.error import HTTPError, URLError
 
+import atexit
 import flask
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask import jsonify, request, g
@@ -40,7 +40,8 @@ atexit.register(lambda: scheduler.shutdown())
 @scheduler.scheduled_job(trigger="interval", seconds=10, max_instances=1)
 def download_scheduled_files():
     with app.app_context():
-        file_to_download = query_db('SELECT * FROM downloads WHERE completed = 0 AND retries < ? LIMIT 1', [MAX_RETRIES], one=True)
+        file_to_download = query_db('SELECT * FROM downloads WHERE completed = 0 AND retries < ? LIMIT 1',
+                                    [MAX_RETRIES], one=True)
 
     if not file_to_download:
         return
@@ -51,7 +52,8 @@ def download_scheduled_files():
 
     try:
         app.logger.info("Starting download file {}".format(file_to_download["name"]))
-        obj = SmartDL(file_to_download["url"], tmp_path, progress_bar=False, request_args={"headers": json.loads(file_to_download["headers"])})
+        obj = SmartDL(file_to_download["url"], tmp_path, progress_bar=False,
+                      request_args={"headers": json.loads(file_to_download["headers"])})
         obj.start()
 
         os.makedirs(destination_path, exist_ok=True)
@@ -168,7 +170,8 @@ def api_download():
             _duplicated_file = query_db('SELECT * FROM downloads WHERE hash = ?', [hash], one=True)
 
             if _duplicated_file["url"] != link["url"] or _duplicated_file["headers"] != headers:
-                execute_db("UPDATE downloads SET url = ?, headers = ?, failed = 0, retries = 0 WHERE hash = ?", [link["url"], headers, hash])
+                execute_db("UPDATE downloads SET url = ?, headers = ?, failed = 0, retries = 0 WHERE hash = ?",
+                           [link["url"], headers, hash])
 
             result.append({
                 "id": hash,
@@ -213,6 +216,29 @@ def single_download_retry(hash):
 
     execute_db("UPDATE downloads SET failed = 0, retries = 0 WHERE hash = ?", [hash], commit=True)
     return jsonify({"status": "ok"})
+
+
+@app.route('/api/v1/download/status/', methods=['POST'])
+def download_bulk_status():
+    if request.args.get('key') != API_KEY:
+        return jsonify({}), 401
+
+    data = request.get_json()
+    files = data.get("files", [])
+    downloads = query_db(f"SELECT * FROM downloads WHERE hash in ({','.join(['?']*len(files))})", files)
+
+    return jsonify(
+        {
+            download["hash"]: {
+                "hash": download["hash"],
+                "name": download["name"],
+                "path": download["path"],
+                "url": download["url"],
+                "failed": download["failed"],
+                "completed": bool(download["completed"])
+            } for download in downloads
+        }
+    )
 
 
 @app.route('/api/v1/download/<hash>', methods=['GET'])

@@ -147,6 +147,54 @@ The `failed` number corresponds to a given error id, following the next schema:
  3. Local IO problems (maybe no disk space available)
 
 
+#### Bulk Download status
+To check if a download is already finished just execute an `POST` to `/api/v1/download/status`, with an input of hash like this:
+```json
+{
+  "files": [
+    "7774e37c7c150c69d3e1db88beb1ae3a",
+    "7201ffdc39c46d5b7a1926c2f52a8137",
+    "b7f5627bebc493366ddc307a90979fd5"
+  ]
+}
+```
+
+And you will get an response like this:
+```json
+{
+  "7201ffdc39c46d5b7a1926c2f52a8137": {
+    "completed": true,
+    "failed": 0,
+    "hash": "7201ffdc39c46d5b7a1926c2f52a8137",
+    "name": "output_file_name.zip",
+    "path": "something/folder/",
+    "url": "http://something.com/example.zip",
+  },
+  "7774e37c7c150c69d3e1db88beb1ae3a": {
+    "completed": true,
+    "failed": 0,
+    "hash": "7774e37c7c150c69d3e1db88beb1ae3a",
+    "name": "output_file_name.zip",
+    "path": "something/folder/",
+    "url": "http://something.com/example.zip",
+  },
+  "b7f5627bebc493366ddc307a90979fd5": {
+    "completed": true,
+    "failed": 0,
+    "hash": "b7f5627bebc493366ddc307a90979fd5",
+    "name": "output_file_name.zip",
+    "path": "something/folder/",
+    "url": "http://something.com/example.zip",
+  }
+}
+```
+
+The `failed` number corresponds to a given error id, following the next schema:
+ 1. Server error
+ 2. Problem reaching the server
+ 3. Local IO problems (maybe no disk space available)
+
+
 #### Retry a single failed download 
 To retry a single failed download send an `POST` to `/api/v1/download/<hash>`, and you will get the following response:
 ```json
