@@ -64,7 +64,7 @@ class Download:
 
     @classmethod
     def retry_all(cls):
-        db.execute('UPDATE downloads SET failed = 0, retries = 0 WHERE failed <> 0 AND completed = 0', commit=True)
+        db.execute('UPDATE downloads SET failed = 0, retries = 0 WHERE failed <> 0 AND completed = 0')
         return True
 
     @classmethod
@@ -111,9 +111,9 @@ class Download:
         try:
             db.execute("INSERT INTO downloads (hash, name, path, url, completed, headers) VALUES (?, ?, ?, ?, ?, ?)", [
                 self.hash, self.name, self.path, self.url, self.completed, json.dumps(self.headers)
-            ], commit=True)
+            ])
         except sqlite3.IntegrityError:
-            db.execute("UPDATE downloads WHERE hash = ? SET name = ?, path = ?, url = ?, completed = ?, headers = ?", [
-                self.hash, self.name, self.path, self.url, self.completed, json.dumps(self.headers)
-            ], commit=True)
+            db.execute("UPDATE downloads SET name = ?, path = ?, url = ?, completed = ?, headers = ? WHERE hash = ?", [
+                self.name, self.path, self.url, self.completed, json.dumps(self.headers), self.hash
+            ])
         return True
