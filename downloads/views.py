@@ -1,4 +1,4 @@
-from flask import jsonify, request, Blueprint
+from flask import jsonify, request, Blueprint, current_app
 
 from downloads.auth import authorizer
 from downloads.models import Download
@@ -25,6 +25,7 @@ def api_download():
         download = Download.loads(file)
         download.save()
 
+        current_app.logger.info('Scheduled File {} for download'.format(download.name))
         result.append(Download.dumps(download))
 
     return jsonify({

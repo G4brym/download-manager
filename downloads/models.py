@@ -52,6 +52,8 @@ class Download:
 
         if not headers:
             headers = {}
+        if isinstance(headers, str):
+            headers = json.loads(headers)
         self.headers = headers
 
     @property
@@ -69,12 +71,19 @@ class Download:
 
     @classmethod
     def get_by_hash(cls, hash: str):
-        return Download.loads(db.query('SELECT * FROM downloads WHERE hash = ?', [hash], one=True))
+        obj = db.query('SELECT * FROM downloads WHERE hash = ?', [hash], one=True)
+        if not obj:
+            return None
+
+        return Download.loads(obj)
 
     @classmethod
     def get_next_to_download(cls):
-        return Download.loads(
-            db.query('SELECT * FROM downloads WHERE completed = 0 AND retries < ? LIMIT 1', [MAX_RETRIES], one=True))
+        obj = db.query('SELECT * FROM downloads WHERE completed = 0 AND retries < ? LIMIT 1', [MAX_RETRIES], one=True)
+        if not obj:
+            return None
+
+        return Download.loads(obj)
 
     @classmethod
     def list_by_hash(cls, hash_list: List[str]):
@@ -87,12 +96,12 @@ class Download:
     @classmethod
     def loads(cls, config: Dict):
         return cls(
-            hash=config["hash"],
-            name=config["name"],
+            hash=config.get("hash"),
+            name=config.get("name"),
             path=config["path"],
             url=config["url"],
-            headers=json.loads(config["headers"]),
-            completed=config["completed"],
+            headers=config.get("headers"),
+            completed=config.get("completed"),
         )
 
     @classmethod

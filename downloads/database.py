@@ -7,6 +7,13 @@ from flask import g
 from downloads.core import DATABASE_PATH, BASE_PATH
 
 
+def dict_factory(cursor, row):
+    d = {}
+    for idx, col in enumerate(cursor.description):
+        d[col[0]] = row[idx]
+    return d
+
+
 class DatabaseHandler:
     _app = None
 
@@ -26,7 +33,7 @@ class DatabaseHandler:
         if db_conn is None:
             db_conn = g._database = sqlite3.connect(DATABASE_PATH)
 
-        db_conn.row_factory = sqlite3.Row
+        db_conn.row_factory = dict_factory
         return db_conn
 
     def initial_migration(self):
