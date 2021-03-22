@@ -49,23 +49,23 @@ def download_scheduled_files():
             download.save()
 
             logger.info("Download Finished")
-        except HTTPError:
+        except HTTPError as e:
             download.failed = 1
             download.retries = download.retries + 1
             download.save()
 
-            logger.warning("Download Failed with error 1")
+            logger.warning("Download Failed with error 1 (HTTPError): {}".format(str(e)))
         except URLError:
             download.failed = 2
             download.retries = download.retries + 1
             download.save()
 
-            logger.warning("Download Failed with error 2")
+            logger.warning("Download Failed with error 2 (URLError): {}".format(str(e)))
         except IOError:
             download.failed = 3
             download.retries = download.retries + 1
             download.save()
 
-            logger.warning("Download Failed with error 3")
+            logger.warning("Download Failed with error 3 (IOError): {}".format(str(e)))
         finally:
             shutil.rmtree(tmp_folder, ignore_errors=True)
