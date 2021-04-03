@@ -1,15 +1,17 @@
-from functools import wraps
-
-from flask import jsonify, request
+from fastapi import Depends, HTTPException
+from fastapi.security import APIKeyHeader
+from starlette import status
 
 from downloads.core import API_KEY
 
+AUTHORIZATION = APIKeyHeader(name='authorization')
 
-def authorizer(func):
-    @wraps(func)
-    def decorated_function(*args, **kwargs):
-        if request.args.get('authorization') != API_KEY and request.headers.get('authorization') != API_KEY:
-            return jsonify({"success": False, "message": "Missing authorization key"}), 401
-        return func(*args, **kwargs)
 
-    return decorated_function
+def authorizer(authorization: str = Depends(AUTHORIZATION)):
+    if authorization != API_KEY:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid API Key",
+        )
+
+    return True

@@ -1,83 +1,73 @@
-from flask import jsonify, request, Blueprint, current_app
+import logging
+from typing import List
 
-from downloads.auth import authorizer
+from fastapi import APIRouter, HTTPException
+
+from downloads.dataclasses import StatusDTO, DownloadDTOIn, DownloadDTOOut, SuccessResponse, DownloadStatusDTO
 from downloads.models import Download
 
-api = Blueprint('api', __name__)
+logger = logging.getLogger(__name__)
+
+router = APIRouter(
+    tags=["Downloads"],
+)
 
 
-@api.route('/', methods=['GET'])
-@authorizer
+@router.get("/status/", response_model=StatusDTO)
 def api_index():
-    return jsonify({
-        "success": True,
-        "downloads": Download.count()
-    })
+    return dict(downloads=Download.count())
 
 
-@api.route('/download/', methods=['POST'])
-@authorizer
-def api_download():
-    files = request.get_json().get("files", [])
+@router.post("/download/", response_model=List[DownloadDTOOut])
+def api_download(files: List[DownloadDTOIn]):
     result = []
 
     for file in files:
-        download = Download.loads(file)
+        download = Download.loads(file.__dict__)
         download.save()
 
-        current_app.logger.info('Scheduled File {} for download'.format(download.name))
+        logger.info('Scheduled File {} for download'.format(download.name))
         result.append(Download.dumps(download))
 
-    return jsonify({
-        "success": True,
-        "files": result
-    }), 201
+    return result
 
 
-@api.route('/download/retry/', methods=['post'])
-@authorizer
+@router.post("/download/retry/", response_model=SuccessResponse)
 def download_retry_all():
     Download.retry_all()
-    return jsonify({"success": True})
+    return dict(success=True)
 
 
-@api.route('/download/<hash>/retry/', methods=['post'])
-@authorizer
-def download_retry_single(hash):
+@router.post("/download/<hash>/retry/", response_model=SuccessResponse, responses={404: {"description": "Not found"}})
+def download_retry_single(hash: str):
     download = Download.get_by_hash(hash)
     if not download:
-        return jsonify({"success": False}), 404
+        raise HTTPException(404, "Item not found")
 
     download.failed = 0
     download.retries = 0
     download.save()
 
-    return jsonify({"success": True})
+    return dict(success=True)
 
 
-@api.route('/download/status/', methods=['POST'])
-@authorizer
-def download_status_bulk():
-    files = request.get_json().get("files", [])
+@router.post("/download/status/", response_model=DownloadStatusDTO)
+def download_status_bulk(files: List[str]):
     downloads = Download.list_by_hash(files)
 
-    return jsonify({
+    return {
         "success": True,
         "files": {
             download.hash: Download.dumps(download)
             for download in downloads
         }
-    })
+    }
 
 
-@api.route('/download/<hash>/', methods=['GET'])
-@authorizer
-def download_status_single(hash):
+@router.get("/download/<hash>/", response_model=DownloadDTOOut, responses={404: {"description": "Not found"}})
+def download_status_single(hash: str):
     download = Download.get_by_hash(hash)
     if not download:
-        return jsonify({"success": False}), 404
+        raise HTTPException(404, "Item not found")
 
-    return jsonify({
-        "success": True,
-        "file": Download.dumps(download)
-    })
+    return Download.dumps(download)

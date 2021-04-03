@@ -1,0 +1,9 @@
+version: '3'
+services:
+  web:
+    build: ./
+    ports:
+      - 8000:8000
+    volumes:
+      - ./config/config/:/app/config
+      - ./config/downloads/:/downloads

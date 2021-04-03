@@ -62,7 +62,7 @@ class Download:
 
     @classmethod
     def count(cls):
-        return db.query('select count(*) from downloads', one=True)[0]
+        return db.query('select count(*) as count from downloads', one=True)["count"]
 
     @classmethod
     def retry_all(cls):
