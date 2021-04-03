@@ -38,7 +38,7 @@ def download_retry_all():
     return dict(success=True)
 
 
-@router.post("/download/<hash>/retry/", response_model=SuccessResponse, responses={404: {"description": "Not found"}})
+@router.post("/download/{hash}/retry/", response_model=SuccessResponse, responses={404: {"description": "Not found"}})
 def download_retry_single(hash: str):
     download = Download.get_by_hash(hash)
     if not download:
@@ -64,7 +64,7 @@ def download_status_bulk(files: List[str]):
     }
 
 
-@router.get("/download/<hash>/", response_model=DownloadDTOOut, responses={404: {"description": "Not found"}})
+@router.get("/download/{hash}/", response_model=DownloadDTOOut, responses={404: {"description": "Not found"}})
 def download_status_single(hash: str):
     download = Download.get_by_hash(hash)
     if not download:
