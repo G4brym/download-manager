@@ -14,3 +14,4 @@ ENV PORT=8000
 
 VOLUME /app/config
 VOLUME /downloads
+EXPOSE 8000
