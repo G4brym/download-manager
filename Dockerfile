@@ -1,17 +1,30 @@
-FROM tiangolo/uvicorn-gunicorn-fastapi:python3.8
+FROM tiangolo/uvicorn-gunicorn-fastapi:python3.8-alpine3.10
 LABEL maintainer="G4brym"
 
-COPY ./requirements.txt /app/
-RUN pip install -r requirements.txt
+RUN apk add --no-cache su-exec bash gcc build-base
 
-COPY ./downloads /app/downloads
-COPY ./main.py /app/
-COPY ./schema.sql /app/
-COPY ./prestart.sh /app/
+RUN addgroup -g 1000 webapp \
+  && adduser -Ss /bin/false -u 1000 -G webapp -h /home/webapp webapp \
+  && mkdir -m 777 /downloads && mkdir -m 777 /config \
+  && chown webapp:webapp /config /app /downloads /home/webapp
 
-ENV MAX_WORKERS=1
-ENV PORT=8000
-
-VOLUME /app/config
+VOLUME /config
 VOLUME /downloads
+WORKDIR /app
 EXPOSE 8000
+
+ENV UID=1000 GID=1000 \
+    MAX_WORKERS=1 \
+    PORT=8000
+
+COPY requirements.txt /app/
+RUN pip install -U setuptools pip
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . /app/
+RUN make dev
+
+RUN dos2unix /app/prestart.sh && chmod +x /app/prestart.sh
+RUN dos2unix /app/start.sh && chmod +x /app/start.sh
+
+ENTRYPOINT [ "/app/prestart.sh" ]

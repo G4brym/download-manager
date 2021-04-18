@@ -1,14 +1,6 @@
-from dataclasses import dataclass
-from enum import Enum
 from typing import Dict
 
 from pydantic import BaseModel
-
-
-class FailTypes(Enum):
-    ServerError = 1
-    ReachingError = 2
-    LocalIOError = 3
 
 
 class SuccessResponse(BaseModel):
@@ -20,7 +12,6 @@ class StatusDTO(BaseModel):
 
 
 class DownloadDTOIn(BaseModel):
-    hash: str
     name: str
     path: str
     url: str
@@ -32,7 +23,7 @@ class DownloadDTOOut(BaseModel):
     name: str
     path: str
     url: str
-    failed: FailTypes
+    failed: int
     retries: int
     completed: bool
 

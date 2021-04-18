@@ -2,9 +2,9 @@ from fastapi import Depends, HTTPException
 from fastapi.security import APIKeyHeader
 from starlette import status
 
-from downloads.core import API_KEY
+from downloads.domain.settings import API_KEY
 
-AUTHORIZATION = APIKeyHeader(name='authorization')
+AUTHORIZATION = APIKeyHeader(name="authorization")
 
 
 def authorizer(authorization: str = Depends(AUTHORIZATION)):

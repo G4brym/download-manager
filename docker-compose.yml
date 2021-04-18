@@ -5,5 +5,5 @@ services:
     ports:
       - 8000:8000
     volumes:
-      - ./config/config/:/app/config
+      - ./config/config/:/config
       - ./config/downloads/:/downloads
