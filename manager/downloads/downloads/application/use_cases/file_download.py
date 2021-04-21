@@ -1,4 +1,3 @@
-import sqlite3
 from datetime import datetime
 from typing import Dict, Optional
 
@@ -21,9 +20,14 @@ class FileDownload:
             creation_date=datetime.now(),
         )
 
-        try:
-            self.files_repo.save(file)
-        except sqlite3.IntegrityError:
-            return None
+        # Check if this file was already downloaded
+        _previous_file = self.files_repo.get(file.hash)
+        if _previous_file is not None:
+            # File already exists, we only need to update url and headers
+            file = _previous_file.copy_with(
+                url=url,
+                headers=headers,
+            )
 
+        self.files_repo.save(file)
         return file

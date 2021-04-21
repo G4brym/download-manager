@@ -29,6 +29,10 @@ class File:
     def abs_path(self):
         return os.path.join(DOWNLOADS_PATH, self.path)
 
+    @property
+    def hash(self):
+        return self.__hash__()
+
     def __hash__(self):
         return hashlib.md5(self.file_path.encode("utf-8")).hexdigest()
 

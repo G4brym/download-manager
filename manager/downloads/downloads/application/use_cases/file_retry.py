@@ -1,5 +1,5 @@
 from downloads.application.repositories import FilesRepository
-from downloads.domain.value_objects import HashId
+from downloads.domain.value_objects import HashId, FailTypes
 
 
 class FileRetry:
@@ -14,7 +14,7 @@ class FileRetry:
 
         self.files_repo.save(
             file.copy_with(
-                failed=0,
+                failed=FailTypes.NoError,
                 retries=0,
             )
         )

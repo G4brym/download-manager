@@ -22,11 +22,14 @@ class SmartDLDownloadRepository(DownloadRepository):
         tmp_path = os.path.join(tmp_folder, name)
 
         try:
-            headers = headers
-            headers.setdefault("User-Agent", "DownloadManager 1.0")
+            _tmp_headers = headers
+            _tmp_headers.setdefault("User-Agent", "DownloadManager 1.0")
 
             obj = SmartDL(
-                url, tmp_path, progress_bar=False, request_args={"headers": headers}
+                url,
+                tmp_path,
+                progress_bar=False,
+                request_args={"headers": _tmp_headers},
             )
             obj.start()
 
