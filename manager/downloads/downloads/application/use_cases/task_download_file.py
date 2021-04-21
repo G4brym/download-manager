@@ -27,7 +27,7 @@ class TaskDownloadFile:
         _result = self.downloader_repo.download_file(
             url=file.url,
             name=file.name,
-            path=file.path,
+            path=file.abs_path,
             headers=file.headers,
         )
 

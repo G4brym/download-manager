@@ -1,4 +1,5 @@
 import sqlite3
+from datetime import datetime
 from typing import Dict, Optional
 
 from downloads.application.repositories import FilesRepository
@@ -17,6 +18,7 @@ class FileDownload:
             path=path,
             url=url,
             headers=headers,
+            creation_date=datetime.now(),
         )
 
         try:

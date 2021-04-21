@@ -1,4 +1,5 @@
-from typing import Dict
+from datetime import datetime
+from typing import Dict, Optional
 
 from pydantic import BaseModel
 
@@ -26,6 +27,9 @@ class DownloadDTOOut(BaseModel):
     failed: int
     retries: int
     completed: bool
+    creation_date: datetime
+    completion_date: Optional[datetime]
+    headers: Optional[Dict[str, str]]
 
 
 class DownloadStatusDTO(BaseModel):

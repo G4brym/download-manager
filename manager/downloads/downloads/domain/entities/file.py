@@ -5,6 +5,7 @@ from dataclasses import dataclass, replace
 from datetime import datetime
 from typing import Optional, Dict
 
+from downloads.domain.settings import DOWNLOADS_PATH
 from downloads.domain.value_objects import FailTypes
 
 
@@ -23,6 +24,10 @@ class File:
     @property
     def file_path(self):
         return os.path.join(self.path, self.name)
+
+    @property
+    def abs_path(self):
+        return os.path.join(DOWNLOADS_PATH, self.path)
 
     def __hash__(self):
         return hashlib.md5(self.file_path.encode("utf-8")).hexdigest()
