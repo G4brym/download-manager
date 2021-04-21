@@ -1,4 +1,4 @@
-from main.database_service import DatabaseService
+from common.database_service import DatabaseService
 
 
 class SqlQuery:

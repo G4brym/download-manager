@@ -5,9 +5,9 @@ import injector
 
 from downloads import Downloads
 from downloads_infrastructure import DownloadsInfrastructure
-from main.database import DatabaseHandler
-from main.database_service import DatabaseService
-from main.logger import provide_logger
+from common.database import DatabaseHandler
+from common.database_service import DatabaseService
+from common.logger import provide_logger
 
 __all__ = [
     "provider",
@@ -15,7 +15,7 @@ __all__ = [
 ]
 
 
-class Main(injector.Module):
+class Common(injector.Module):
     @injector.provider
     @injector.singleton
     def logger(self) -> Logger:
@@ -31,7 +31,7 @@ class ProvideManager(object):
     def __init__(self):
         self.injector = injector.Injector(
             [
-                Main(),
+                Common(),
                 Downloads(),
                 DownloadsInfrastructure(),
             ],

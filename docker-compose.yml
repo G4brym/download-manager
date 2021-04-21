@@ -7,3 +7,5 @@ services:
     volumes:
       - ./config/config/:/config
       - ./config/downloads/:/downloads
+    environment:
+      - TZ=Europe/Lisbon

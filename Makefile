@@ -1,8 +1,8 @@
 # order of libs is meaningful. First, we install libs without internal dependencies that other libs depend on.
-libs := downloads downloads_infrastructure main
+libs := downloads downloads_infrastructure common
 
 define install_dev
-	pip install -e $(1)
+	pip install -e manager/$(1)
 
 endef
 
@@ -14,4 +14,4 @@ dev:
 .PHONY: freeze-deps
 freeze-deps:
 	pip install pip-tools==6.1.0
-	pip-compile --upgrade --output-file=requirements.txt $(foreach lib,$(libs), ./$(lib)/requirements.txt ./$(lib)/requirements-dev.txt)
+	pip-compile --upgrade --output-file=requirements.txt $(foreach lib,$(libs), ./manager/$(lib)/requirements.txt ./manager/$(lib)/requirements-dev.txt)

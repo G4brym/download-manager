@@ -4,8 +4,8 @@ from pathlib import Path
 
 from cuttlepool import CuttlePool
 
-from main.database_service import DatabaseService
-from main.settings import DATABASE_PATH, BASE_PATH
+from common.database_service import DatabaseService
+from common.settings import DATABASE_PATH, BASE_PATH
 
 
 def dict_factory(cursor, row):

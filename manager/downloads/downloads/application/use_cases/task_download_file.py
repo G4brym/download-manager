@@ -1,3 +1,4 @@
+from datetime import datetime
 from logging import Logger
 
 from downloads.application.repositories import FilesRepository, DownloadRepository
@@ -34,6 +35,7 @@ class TaskDownloadFile:
             updated_file = file.copy_with(
                 completed=True,
                 failed=FailTypes.NoError,
+                creation_date=datetime.now(),
             )
 
             self.logger.info("Download Finished")

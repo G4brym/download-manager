@@ -2,6 +2,14 @@ from typing import List
 
 from fastapi import APIRouter, HTTPException
 
+from common import provider
+from common.router_dtos import (
+    StatusDTO,
+    DownloadDTOIn,
+    DownloadDTOOut,
+    SuccessResponse,
+    DownloadStatusDTO,
+)
 from downloads import (
     GetTotalFiles,
     FileDownload,
@@ -10,22 +18,15 @@ from downloads import (
     GetBulkFileStatus,
     FileRetryAll,
 )
-from main.router_dtos import (
-    StatusDTO,
-    DownloadDTOIn,
-    DownloadDTOOut,
-    SuccessResponse,
-    DownloadStatusDTO,
-)
-from main import provider
+from downloads.domain.entities import File
 
 router = APIRouter(
-    tags=["Downloads"],
-    prefix="downloads",
+    tags=["Files"],
+    prefix="/files",
 )
 
 
-@router.get("/", response_model=StatusDTO)
+@router.get("/count/", response_model=StatusDTO)
 def file_count():
     @provider.inject
     def execute(get_total_files: GetTotalFiles):
@@ -48,7 +49,9 @@ def file_download(files: List[DownloadDTOIn]):
             )
 
             if _result:
-                response.append(_result)
+                response.append(File.to_dict(_result))
+
+        return response
 
     return execute()
 

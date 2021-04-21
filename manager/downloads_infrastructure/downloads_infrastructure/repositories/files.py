@@ -6,7 +6,7 @@ from downloads import FilesRepository
 from downloads.domain.entities import File
 from downloads.domain.settings import MAX_RETRIES
 from downloads.domain.value_objects import HashId
-from main.database_service import DatabaseService
+from common.database_service import DatabaseService
 
 
 class SqlFilesRepository(FilesRepository):
@@ -27,7 +27,7 @@ class SqlFilesRepository(FilesRepository):
         try:
             self._database.execute(
                 "INSERT INTO downloads (hash, name, path, url, failed, completed, retries, headers, creation_date, "
-                "completion_date) VALUES (?, ?, ?, ?, ?, ?)",
+                "completion_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 [
                     file_dump["hash"],
                     file_dump["name"],

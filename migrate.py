@@ -1,4 +1,4 @@
-from main import provider, DatabaseService
+from common import provider, DatabaseService
 
 
 @provider.inject

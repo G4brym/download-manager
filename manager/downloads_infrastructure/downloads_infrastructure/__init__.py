@@ -7,6 +7,13 @@ __all__ = [
     "DownloadsInfrastructure",
 ]
 
+from downloads import (
+    GetTotalFiles,
+    GetFileStatus,
+    GetBulkFileStatus,
+    FilesRepository,
+    DownloadRepository,
+)
 from downloads_infrastructure.queries import (
     SqlGetTotalFiles,
     SqlGetFileStatus,
@@ -16,26 +23,26 @@ from downloads_infrastructure.repositories import (
     SqlFilesRepository,
     SmartDLDownloadRepository,
 )
-from main.database import DatabaseService
+from common.database import DatabaseService
 
 
 class DownloadsInfrastructure(injector.Module):
     @injector.provider
-    def get_total_files(self, database: DatabaseService) -> SqlGetTotalFiles:
+    def get_total_files(self, database: DatabaseService) -> GetTotalFiles:
         return SqlGetTotalFiles(database)
 
     @injector.provider
-    def get_file_status(self, database: DatabaseService) -> SqlGetFileStatus:
+    def get_file_status(self, database: DatabaseService) -> GetFileStatus:
         return SqlGetFileStatus(database)
 
     @injector.provider
-    def get_bulk_file_status(self, database: DatabaseService) -> SqlGetBulkFileStatus:
+    def get_bulk_file_status(self, database: DatabaseService) -> GetBulkFileStatus:
         return SqlGetBulkFileStatus(database)
 
     @injector.provider
-    def files_repo(self, database: DatabaseService) -> SqlFilesRepository:
+    def files_repo(self, database: DatabaseService) -> FilesRepository:
         return SqlFilesRepository(database)
 
     @injector.provider
-    def download_repo(self, logger: Logger) -> SmartDLDownloadRepository:
+    def download_repo(self, logger: Logger) -> DownloadRepository:
         return SmartDLDownloadRepository(logger)

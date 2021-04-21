@@ -15,10 +15,11 @@ EXPOSE 8000
 
 ENV UID=1000 GID=1000 \
     MAX_WORKERS=1 \
+    WEB_CONCURRENCY=1 \
     PORT=8000
 
-COPY requirements.txt /app/
 RUN pip install -U setuptools pip
+COPY requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . /app/
