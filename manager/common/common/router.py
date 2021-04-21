@@ -1,3 +1,4 @@
+import dataclasses
 from typing import List
 
 from fastapi import APIRouter, HTTPException
@@ -26,7 +27,11 @@ router = APIRouter(
 )
 
 
-@router.get("/count/", response_model=StatusDTO)
+@router.get(
+    "/count/",
+    response_model=StatusDTO,
+    summary="Get the total files downloaded (also works as an health checker)",
+)
 def file_count():
     @provider.inject
     def execute(get_total_files: GetTotalFiles):
@@ -35,7 +40,11 @@ def file_count():
     return dict(downloads=execute())
 
 
-@router.post("/", response_model=List[DownloadDTOOut])
+@router.post(
+    "/",
+    response_model=List[DownloadDTOOut],
+    summary="Create and schedule a new download",
+)
 def file_download(files: List[DownloadDTOIn]):
     @provider.inject
     def execute(file_download_uc: FileDownload):
@@ -60,6 +69,7 @@ def file_download(files: List[DownloadDTOIn]):
     "/{hash}/",
     response_model=DownloadDTOOut,
     responses={404: {"description": "Not found"}},
+    summary="Get download status for a single file",
 )
 def file_status(hash: str):
     @provider.inject
@@ -71,7 +81,7 @@ def file_status(hash: str):
         if not _result:
             raise HTTPException(404, "Item not found")
 
-        return _result
+        return dataclasses.asdict(_result)
 
     return execute()
 
@@ -80,6 +90,7 @@ def file_status(hash: str):
     "/{hash}/retry/",
     response_model=SuccessResponse,
     responses={404: {"description": "Not found"}},
+    summary="Retry a single failed download",
 )
 def file_retry(hash: str):
     @provider.inject
@@ -95,7 +106,9 @@ def file_retry(hash: str):
     return dict(success=True)
 
 
-@router.post("/retry/", response_model=SuccessResponse)
+@router.post(
+    "/retry/", response_model=SuccessResponse, summary="Retry all failed downloads"
+)
 def file_retry_all():
     @provider.inject
     def execute(file_retry_all_uc: FileRetryAll):
@@ -105,7 +118,11 @@ def file_retry_all():
     return dict(success=True)
 
 
-@router.post("/status/", response_model=DownloadStatusDTO)
+@router.post(
+    "/status/",
+    response_model=DownloadStatusDTO,
+    summary="Get bulk download status for a given list of files",
+)
 def file_status_bulk(files: List[str]):
     @provider.inject
     def execute(get_bulk_file_status: GetBulkFileStatus):

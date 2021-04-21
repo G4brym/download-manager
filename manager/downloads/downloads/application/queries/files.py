@@ -24,6 +24,7 @@ class FileDto:
     def from_file(cls, record: File):
         record = File.to_dict(record)
         return cls(
+            hash=record["hash"],
             name=record["name"],
             path=record["path"],
             url=record["url"],

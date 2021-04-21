@@ -16,7 +16,7 @@ class DownloadDTOIn(BaseModel):
     name: str
     path: str
     url: str
-    headers: Dict[str, str]
+    headers: Optional[Dict[str, str]] = {}
 
 
 class DownloadDTOOut(BaseModel):
