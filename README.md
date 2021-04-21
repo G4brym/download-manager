@@ -13,7 +13,7 @@ docker create \
   -e PUID=1000 \
   -e PGID=1000 \
   -e API_KEY=some_random_key \
-  -v /path/to/config:/app/config \
+  -v /path/to/config:/config \
   -v /path/to/downloads:/downloads \
   --restart unless-stopped \
   g4brym/download-manager
@@ -37,7 +37,7 @@ services:
       - PGID=1000
       - API_KEY=some_random_key
     volumes:
-      - /path/to/config:/app/config
+      - /path/to/config:/config
       - /path/to/downloads:/downloads
     restart: unless-stopped
 ```
@@ -52,7 +52,7 @@ Container images are configured using parameters passed at runtime (such as thos
 | `-e PUID=1000` | for UserID - see below for explanation |
 | `-e PGID=1000` | for GroupID - see below for explanation |
 | `-e API_KEY=some_random_key` | Api key to interact with the server |
-| `-v /app/config` | Contains all configuration and generated files for the application to run, including the sqlite db |
+| `-v /config` | Contains all configuration and generated files for the application to run, including the sqlite db |
 | `-v /downloads` | Where your completed downloads should go |
 
 
@@ -79,12 +79,5 @@ API Documentation is available in the OpenAPI format with Swagger UI
 ```bash
 docker build --tag download-manager:latest .
 docker tag download-manager:latest g4brym/download-manager:latest
-docker push g4brym/download-manager:latest 
+docker push g4brym/download-manager:latest
 ```
-
-## Credits
-
-The base image for this docker application is provided by the [Linuxserver.io](https://www.linuxserver.io/),
-especially a modified version of the [alpine docker image](https://github.com/linuxserver/docker-baseimage-alpine).
-
-This readme file is also based on the work of the [Linuxserver.io](https://www.linuxserver.io/).

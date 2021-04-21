@@ -8,6 +8,6 @@ CREATE TABLE IF NOT EXISTS downloads
     completed INTEGER DEFAULT 0,
     retries INTEGER DEFAULT 0,
     headers TEXT DEFAULT '{}',
-    creation_date datetime default now not null,
+    creation_date datetime not null,
     completion_date datetime
 );
