@@ -1,4 +1,4 @@
-# Docker Download Manager
+# Download Manager
 
 ## 1. Project Information's
 This project is a file downloader and scheduler, just like [pyload](https://github.com/pyload/pyload), but it was build from
