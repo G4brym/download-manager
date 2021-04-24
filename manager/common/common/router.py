@@ -44,6 +44,7 @@ def file_count():
     "/",
     response_model=List[DownloadDTOOut],
     summary="Create and schedule a new download",
+    status_code=201,
 )
 def file_download(files: List[DownloadDTOIn]):
     @provider.inject
@@ -91,6 +92,7 @@ def file_status(hash: str):
     response_model=SuccessResponse,
     responses={404: {"description": "Not found"}},
     summary="Retry a single failed download",
+    status_code=202,
 )
 def file_retry(hash: str):
     @provider.inject
@@ -107,7 +109,10 @@ def file_retry(hash: str):
 
 
 @router.post(
-    "/retry/", response_model=SuccessResponse, summary="Retry all failed downloads"
+    "/retry/",
+    response_model=SuccessResponse,
+    summary="Retry all failed downloads",
+    status_code=202,
 )
 def file_retry_all():
     @provider.inject
