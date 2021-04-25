@@ -26,7 +26,10 @@ class SqlGetFileStatus(GetFileStatus, SqlQuery):
 class SqlGetBulkFileStatus(GetBulkFileStatus, SqlQuery):
     def query(self, hash_list: List[HashId]) -> List[FileDto]:
         obj_list = self._database.query(
-            "SELECT * FROM downloads WHERE hash in ?", [hash_list]
+            "SELECT * FROM downloads WHERE hash in ({})".format(
+                ",".join(["?"] * len(hash_list))
+            ),
+            hash_list,
         )
 
         return [FileDto.from_file(File.from_dict(obj)) for obj in obj_list]

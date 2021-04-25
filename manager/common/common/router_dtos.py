@@ -33,4 +33,4 @@ class DownloadDTOOut(BaseModel):
 
 
 class DownloadStatusDTO(BaseModel):
-    files: Dict[int, DownloadDTOOut]
+    files: Dict[str, DownloadDTOOut]

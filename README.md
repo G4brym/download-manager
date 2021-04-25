@@ -8,7 +8,7 @@ This project is using the [FastAPI](https://github.com/tiangolo/fastapi) framewo
 documentation based on the api endpoints. This brings to this project a simple web interface that
 also allows you to schedule downloads from your browser without having to make an api request using postman.
 
-You can see an example of the [swagger documentation here](https://g4brym.github.io/docker-download-manager/).
+You can see an example of the [swagger documentation here](https://g4brym.github.io/download-manager/).
 
 
 ## 2. Features
@@ -115,4 +115,4 @@ In this instance `PUID=1000` and `PGID=1000`, to find yours use `id user` as bel
 
 ## 6. API Documentation / Swagger UI
 API Documentation is available in the OpenAPI format with Swagger UI
-[Here](https://g4brym.github.io/docker-download-manager/)
+[Here](https://g4brym.github.io/download-manager/)

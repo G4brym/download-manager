@@ -135,4 +135,4 @@ def file_status_bulk(files: List[str]):
             hash_list=files,
         )
 
-    return dict(files={file.hash: file for file in execute()})
+    return dict(files={file.hash: dataclasses.asdict(file) for file in execute()})
