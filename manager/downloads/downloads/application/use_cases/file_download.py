@@ -23,10 +23,11 @@ class FileDownload:
         # Check if this file was already downloaded
         _previous_file = self.files_repo.get(file.hash)
         if _previous_file is not None:
-            # File already exists, we only need to update url and headers
+            # File already exists, we only need to update url, headers and retry the file again, if no already completed
             file = _previous_file.copy_with(
                 url=url,
                 headers=headers,
+                retries=0,
             )
 
         self.files_repo.save(file)
