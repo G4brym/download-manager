@@ -8,7 +8,7 @@ from common.tasks import scheduler
 
 app = FastAPI(
     title="Download Manager API",
-    description="This is the api documentation for the Docker Download Manager server\n\n"
+    description="This is the api documentation for the Download Manager server\n\n"
     "For authentication, you must send the `authorization` header",
     version="1.0",
     docs_url="/",
