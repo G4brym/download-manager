@@ -2,6 +2,7 @@ import os
 import shutil
 import uuid
 from logging import Logger
+from os.path import exists
 from typing import Dict, Optional
 from urllib.error import HTTPError, URLError
 
@@ -20,6 +21,9 @@ class SmartDLDownloadRepository(DownloadRepository):
     ) -> FailTypes:
         tmp_folder = os.path.join(TMP_PATH, uuid.uuid4().hex)
         tmp_path = os.path.join(tmp_folder, name)
+
+        if exists(path):
+            self.logger.warning(f"File {name} already exists in path {path}")
 
         try:
             _tmp_headers = headers

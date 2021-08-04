@@ -2,6 +2,7 @@ import atexit
 
 from fastapi import FastAPI, Depends
 
+import common.sentry  # NOQA
 from common.auth import authorizer
 from common.router import router
 from common.tasks import scheduler
