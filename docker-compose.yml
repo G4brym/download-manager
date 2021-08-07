@@ -9,4 +9,4 @@ services:
       - ./config/downloads/:/downloads
     environment:
       - TZ=Europe/Lisbon
-      - SENTRY_DSN=https://b9cb5deed19c4ca0b03132de73e5bc45@o247228.ingest.sentry.io/5595505
+#      - SENTRY_DSN=https://@.ingest.sentry.io/123
