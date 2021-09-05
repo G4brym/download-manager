@@ -12,7 +12,7 @@ backports.entry-points-selectable==1.1.0
     # via virtualenv
 certifi==2021.5.30
     # via sentry-sdk
-cfgv==3.3.0
+cfgv==3.3.1
     # via pre-commit
 click==7.1.2
     # via uvicorn
@@ -22,7 +22,7 @@ distlib==0.3.2
     # via virtualenv
 factory-boy==3.2.0
     # via -r ./manager/downloads/requirements-dev.txt
-faker==8.11.0
+faker==8.12.1
     # via
     #   factory-boy
     #   pytest-faker
@@ -34,7 +34,7 @@ h11==0.12.0
     # via uvicorn
 httptools==0.1.2
     # via uvicorn
-identify==2.2.12
+identify==2.2.13
     # via pre-commit
 iniconfig==1.1.1
     # via pytest
@@ -47,7 +47,7 @@ nodeenv==1.6.0
     # via pre-commit
 packaging==21.0
     # via pytest
-platformdirs==2.2.0
+platformdirs==2.3.0
     # via virtualenv
 pluggy==0.13.1
     # via pytest
@@ -88,6 +88,10 @@ six==1.16.0
     #   apscheduler
     #   python-dateutil
     #   virtualenv
+sqlify==0.4.0
+    # via
+    #   -r ./manager/common/requirements.txt
+    #   -r ./manager/downloads_infrastructure/requirements.txt
 starlette==0.13.6
     # via fastapi
 text-unidecode==1.3
@@ -96,7 +100,7 @@ toml==0.10.2
     # via
     #   pre-commit
     #   pytest
-typing-extensions==3.10.0.0
+typing-extensions==3.10.0.2
     # via injector
 tzlocal==2.1
     # via apscheduler
@@ -104,9 +108,9 @@ urllib3==1.26.6
     # via sentry-sdk
 uvicorn[standard]==0.13.3
     # via -r ./manager/common/requirements.txt
-uvloop==0.15.3
+uvloop==0.16.0
     # via uvicorn
-virtualenv==20.7.0
+virtualenv==20.7.2
     # via pre-commit
 watchgod==0.6
     # via uvicorn
