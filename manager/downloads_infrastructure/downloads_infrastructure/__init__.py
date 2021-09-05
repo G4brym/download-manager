@@ -7,6 +7,8 @@ __all__ = [
     "DownloadsInfrastructure",
 ]
 
+from sqlify import Sqlite3Sqlify
+
 from downloads import (
     GetTotalFiles,
     GetFileStatus,
@@ -23,24 +25,23 @@ from downloads_infrastructure.repositories import (
     SqlFilesRepository,
     SmartDLDownloadRepository,
 )
-from common.database import DatabaseService
 
 
 class DownloadsInfrastructure(injector.Module):
     @injector.provider
-    def get_total_files(self, database: DatabaseService) -> GetTotalFiles:
+    def get_total_files(self, database: Sqlite3Sqlify) -> GetTotalFiles:
         return SqlGetTotalFiles(database)
 
     @injector.provider
-    def get_file_status(self, database: DatabaseService) -> GetFileStatus:
+    def get_file_status(self, database: Sqlite3Sqlify) -> GetFileStatus:
         return SqlGetFileStatus(database)
 
     @injector.provider
-    def get_bulk_file_status(self, database: DatabaseService) -> GetBulkFileStatus:
+    def get_bulk_file_status(self, database: Sqlite3Sqlify) -> GetBulkFileStatus:
         return SqlGetBulkFileStatus(database)
 
     @injector.provider
-    def files_repo(self, database: DatabaseService) -> FilesRepository:
+    def files_repo(self, database: Sqlite3Sqlify) -> FilesRepository:
         return SqlFilesRepository(database)
 
     @injector.provider
