@@ -65,7 +65,7 @@ class File:
             creation_date=record.creation_date,
             completed=record.completed,
             completion_date=record.completion_date,
-            headers=record.headers,
+            headers=json.dumps(record.headers) if record.headers else None,
         )
 
     def copy_with(self, **kwargs):
