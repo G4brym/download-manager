@@ -57,7 +57,7 @@ docker create \
   -v /path/to/config:/config \
   -v /path/to/downloads:/downloads \
   --restart unless-stopped \
-  g4brym/download-manager
+  ghcr.io/g4brym/download-manager/download-manager
 ```
 
 
@@ -69,7 +69,7 @@ Compatible with docker-compose v2 schemas.
 version: "2.1"
 services:
   manager:
-    image: g4brym/download-manager
+    image: ghcr.io/g4brym/download-manager/download-manager
     container_name: manager
     network_mode: host
     environment:
