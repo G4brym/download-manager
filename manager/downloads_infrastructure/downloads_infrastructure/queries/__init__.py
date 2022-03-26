@@ -1,3 +1,3 @@
-__all__ = ["SqlGetTotalFiles", "SqlGetFileStatus", "SqlGetBulkFileStatus"]
+__all__ = ["SqlGetDownloadStatus", "SqlGetFileStatus", "SqlGetBulkFileStatus"]
 
-from .files import SqlGetTotalFiles, SqlGetFileStatus, SqlGetBulkFileStatus
+from .files import SqlGetDownloadStatus, SqlGetFileStatus, SqlGetBulkFileStatus

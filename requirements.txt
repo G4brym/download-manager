@@ -88,7 +88,7 @@ six==1.16.0
     #   apscheduler
     #   python-dateutil
     #   virtualenv
-sqlify==0.4.0
+sqlify==0.7.0
     # via
     #   -r ./manager/common/requirements.txt
     #   -r ./manager/downloads_infrastructure/requirements.txt

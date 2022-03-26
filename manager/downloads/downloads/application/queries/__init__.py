@@ -1,3 +1,4 @@
-__all__ = ["FileDto", "GetTotalFiles", "GetFileStatus", "GetBulkFileStatus"]
+__all__ = ["FileDto", "GetDownloadStatus", "GetFileStatus", "GetBulkFileStatus"]
 
-from .files import FileDto, GetTotalFiles, GetFileStatus, GetBulkFileStatus
+from .files import FileDto, GetFileStatus, GetBulkFileStatus
+from .status import GetDownloadStatus

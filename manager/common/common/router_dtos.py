@@ -8,10 +8,6 @@ class SuccessResponse(BaseModel):
     success: bool
 
 
-class StatusDTO(BaseModel):
-    downloads: int
-
-
 class DownloadDTOIn(BaseModel):
     name: str
     path: str

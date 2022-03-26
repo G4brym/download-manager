@@ -3,8 +3,8 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Optional, List, Dict
 
-from downloads.domain.entities import File
-from downloads.domain.value_objects import HashId
+from ...domain.entities import File
+from ...domain.value_objects import HashId
 
 
 @dataclass
@@ -35,12 +35,6 @@ class FileDto:
             completion_date=record["completion_date"],
             headers=record["headers"],
         )
-
-
-class GetTotalFiles(abc.ABC):
-    @abc.abstractmethod
-    def query(self) -> int:
-        pass
 
 
 class GetFileStatus(abc.ABC):

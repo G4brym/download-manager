@@ -10,14 +10,14 @@ __all__ = [
 from sqlify import Sqlite3Sqlify
 
 from downloads import (
-    GetTotalFiles,
+    GetDownloadStatus,
     GetFileStatus,
     GetBulkFileStatus,
     FilesRepository,
     DownloadRepository,
 )
 from downloads_infrastructure.queries import (
-    SqlGetTotalFiles,
+    SqlGetDownloadStatus,
     SqlGetFileStatus,
     SqlGetBulkFileStatus,
 )
@@ -29,8 +29,8 @@ from downloads_infrastructure.repositories import (
 
 class DownloadsInfrastructure(injector.Module):
     @injector.provider
-    def get_total_files(self, database: Sqlite3Sqlify) -> GetTotalFiles:
-        return SqlGetTotalFiles(database)
+    def get_total_files(self, database: Sqlite3Sqlify) -> GetDownloadStatus:
+        return SqlGetDownloadStatus(database)
 
     @injector.provider
     def get_file_status(self, database: Sqlite3Sqlify) -> GetFileStatus:

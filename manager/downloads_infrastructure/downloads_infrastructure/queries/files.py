@@ -2,18 +2,8 @@ from typing import List, Optional
 
 from sqlify import Sqlite3Sqlify
 
-from downloads import GetTotalFiles, GetFileStatus, GetBulkFileStatus, HashId, FileDto
+from downloads import GetFileStatus, GetBulkFileStatus, HashId, FileDto
 from downloads.domain.entities import File
-
-
-class SqlGetTotalFiles(GetTotalFiles):
-    def __init__(self, database: Sqlite3Sqlify) -> None:
-        self._database = database
-
-    def query(self) -> int:
-        return self._database.fetchone(table="downloads", fields="count(*) as count")[
-            "count"
-        ]
 
 
 class SqlGetFileStatus(GetFileStatus):

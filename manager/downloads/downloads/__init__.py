@@ -4,7 +4,7 @@ import injector
 
 from downloads.application.queries import (
     FileDto,
-    GetTotalFiles,
+    GetDownloadStatus,
     GetFileStatus,
     GetBulkFileStatus,
 )
@@ -34,7 +34,7 @@ __all__ = [
     "FileRetryAll",
     "TaskDownloadFile",
     # queries
-    "GetTotalFiles",
+    "GetDownloadStatus",
     "GetFileStatus",
     "GetBulkFileStatus",
     # queries dtos

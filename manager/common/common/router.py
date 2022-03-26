@@ -5,21 +5,20 @@ from fastapi import APIRouter, HTTPException
 
 from common.dependencies import DependencyWrapper
 from common.router_dtos import (
-    StatusDTO,
     DownloadDTOIn,
     DownloadDTOOut,
     SuccessResponse,
     DownloadStatusDTO,
 )
 from downloads import (
-    GetTotalFiles,
+    GetDownloadStatus,
     FileDownload,
     FileRetry,
     GetFileStatus,
     GetBulkFileStatus,
     FileRetryAll,
 )
-from downloads.domain.entities import File
+from downloads.domain.entities import File, DownloadStatus
 
 router = APIRouter(
     tags=["Files"],
@@ -28,13 +27,13 @@ router = APIRouter(
 
 
 @router.get(
-    "/count/",
-    response_model=StatusDTO,
+    "/status/",
+    response_model=DownloadStatus,
     summary="Get the total files downloaded (also works as an health checker)",
 )
 @DependencyWrapper
-def file_count(get_total_files: GetTotalFiles):
-    return dict(downloads=get_total_files.query())
+def download_status(get_total_files: GetDownloadStatus):
+    return get_total_files.query()
 
 
 @router.post(
