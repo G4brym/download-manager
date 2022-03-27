@@ -1,3 +1,4 @@
+-- Migration number: 1 	 2022-03-27 17:24
 CREATE TABLE IF NOT EXISTS downloads
 (
     hash TEXT PRIMARY KEY,

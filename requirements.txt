@@ -23,7 +23,9 @@ certifi==2021.10.8
 cfgv==3.3.1
     # via pre-commit
 click==8.0.4
-    # via uvicorn
+    # via
+    #   typer
+    #   uvicorn
 distlib==0.3.4
     # via virtualenv
 factory-boy==3.2.0
@@ -98,7 +100,7 @@ six==1.16.0
     #   virtualenv
 sniffio==1.2.0
     # via anyio
-sqlify==0.7.0
+sqlify==0.7.3
     # via
     #   -r ./manager/common/requirements.txt
     #   -r ./manager/downloads_infrastructure/requirements.txt
@@ -108,6 +110,8 @@ toml==0.10.2
     # via
     #   pre-commit
     #   pytest
+typer==0.4.0
+    # via -r ./manager/common/requirements.txt
 typing-extensions==4.1.1
     # via
     #   injector
