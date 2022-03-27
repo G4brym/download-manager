@@ -100,7 +100,7 @@ six==1.16.0
     #   virtualenv
 sniffio==1.2.0
     # via anyio
-sqlify==0.7.3
+sqlify==0.7.4
     # via
     #   -r ./manager/common/requirements.txt
     #   -r ./manager/downloads_infrastructure/requirements.txt
