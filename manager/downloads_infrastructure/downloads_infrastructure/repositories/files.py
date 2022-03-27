@@ -3,9 +3,8 @@ from typing import Optional
 
 from sqlify import Sqlite3Sqlify
 
-from downloads import FilesRepository
+from downloads import FilesRepository, DownloadSettings
 from downloads.domain.entities import File
-from downloads.domain.settings import MAX_RETRIES
 from downloads.domain.value_objects import HashId
 
 
@@ -55,7 +54,7 @@ class SqlFilesRepository(FilesRepository):
                     "completed = 0",
                     "retries < :max_retries",
                 ],
-                dict(max_retries=MAX_RETRIES),
+                dict(max_retries=DownloadSettings.MAX_RETRIES),
             ),
         )
 

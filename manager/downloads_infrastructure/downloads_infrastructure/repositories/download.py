@@ -8,8 +8,7 @@ from urllib.error import HTTPError, URLError
 
 from pySmartDL import SmartDL
 
-from downloads import DownloadRepository, FailTypes
-from downloads.domain.settings import TMP_PATH
+from downloads import DownloadRepository, FailTypes, DownloadSettings
 
 
 class SmartDLDownloadRepository(DownloadRepository):
@@ -19,7 +18,7 @@ class SmartDLDownloadRepository(DownloadRepository):
     def download_file(
         self, url: str, name: str, path: str, headers: Optional[Dict[str, str]]
     ) -> FailTypes:
-        tmp_folder = os.path.join(TMP_PATH, uuid.uuid4().hex)
+        tmp_folder = os.path.join(DownloadSettings.TMP_PATH, uuid.uuid4().hex)
         tmp_path = os.path.join(tmp_folder, name)
 
         if exists(path):

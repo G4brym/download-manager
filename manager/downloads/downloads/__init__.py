@@ -2,21 +2,21 @@ from logging import Logger
 
 import injector
 
-from downloads.application.queries import (
+from .application.queries import (
     FileDto,
     GetDownloadStatus,
     GetFileStatus,
     GetBulkFileStatus,
 )
-from downloads.application.repositories import FilesRepository, DownloadRepository
-from downloads.application.use_cases import (
+from .application.repositories import FilesRepository, DownloadRepository
+from .application.use_cases import (
     FileDownload,
     FileRetry,
     FileRetryAll,
     TaskDownloadFile,
 )
-from downloads.domain import settings as DownloadSettings
-from downloads.domain.value_objects import HashId, FailTypes
+from .domain.settings import DownloadSettings
+from .domain.value_objects import HashId, FailTypes
 
 __all__ = [
     # module

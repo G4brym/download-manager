@@ -9,13 +9,14 @@ from typing import get_type_hints, Optional, Any
 import injector
 from sqlify import Session, Sqlite3Sqlify
 
-from common.settings import DATABASE_PATH
+from common.settings import CommonSettings
 from downloads import Downloads
 from downloads_infrastructure import DownloadsInfrastructure
 from common.logger import provide_logger
 
 __all__ = [
     "provider",
+    "CommonSettings"
 ]
 
 
@@ -34,7 +35,7 @@ class Common(injector.Module):
 
     @injector.provider
     def database_connection(self) -> Connection:
-        conn = sqlite3.connect(DATABASE_PATH)
+        conn = sqlite3.connect(CommonSettings.DATABASE_PATH)
         conn.row_factory = dict_factory
         return conn
 

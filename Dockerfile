@@ -16,7 +16,10 @@ EXPOSE 8000
 ENV PUID=1000 PGID=1000 \
     MAX_WORKERS=1 \
     WEB_CONCURRENCY=1 \
-    PORT=8000
+    PORT=8000 \
+    ENVIRONMENT="PROD" \
+    DATABASE_PATH="/config/db.sqlite3" \
+    DOWNLOADS_PATH="/downloads"
 
 RUN pip install -U setuptools pip
 COPY requirements.txt /app/

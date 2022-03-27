@@ -5,8 +5,8 @@ from dataclasses import dataclass, replace
 from datetime import datetime
 from typing import Optional, Dict
 
-from downloads.domain.settings import DOWNLOADS_PATH
-from downloads.domain.value_objects import FailTypes
+from ..settings import DownloadSettings
+from ..value_objects import FailTypes
 
 
 @dataclass(frozen=True)
@@ -27,7 +27,7 @@ class File:
 
     @property
     def abs_path(self):
-        return os.path.join(DOWNLOADS_PATH, self.path)
+        return os.path.join(DownloadSettings.DOWNLOADS_PATH, self.path)
 
     @property
     def hash(self):

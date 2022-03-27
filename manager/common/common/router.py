@@ -27,7 +27,7 @@ router = APIRouter(
 
 
 @router.get(
-    "/status/",
+    "/count/",
     response_model=DownloadStatus,
     summary="Get the total files downloaded (also works as an health checker)",
 )

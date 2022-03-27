@@ -1,8 +1,7 @@
 from sqlify import Sqlite3Sqlify
 
-from downloads import GetDownloadStatus
+from downloads import GetDownloadStatus, DownloadSettings
 from downloads.domain.entities import DownloadStatus
-from downloads.domain.settings import MAX_RETRIES
 
 
 class SqlGetDownloadStatus(GetDownloadStatus):
@@ -35,7 +34,7 @@ class SqlGetDownloadStatus(GetDownloadStatus):
                     "completed = 0",
                     "retries < :max_retries",
                 ],
-                dict(max_retries=MAX_RETRIES),
+                dict(max_retries=DownloadSettings.MAX_RETRIES),
             ),
         )["not_completed"]
 
@@ -49,7 +48,7 @@ class SqlGetDownloadStatus(GetDownloadStatus):
                     "completed = 0",
                     "retries >= :max_retries",
                 ],
-                dict(max_retries=MAX_RETRIES),
+                dict(max_retries=DownloadSettings.MAX_RETRIES),
             ),
         )["not_completed_and_failed"]
 
