@@ -50,7 +50,7 @@ class File:
             creation_date=row["creation_date"],
             completed=row["completed"],
             completion_date=row["completion_date"],
-            headers=row["headers"],
+            headers=json.loads(row["headers"]) if row["headers"] else None,
         )
 
     @classmethod
@@ -65,7 +65,7 @@ class File:
             creation_date=record.creation_date,
             completed=record.completed,
             completion_date=record.completion_date,
-            headers=record.headers,
+            headers=json.dumps(record.headers) if record.headers else None,
         )
 
     def copy_with(self, **kwargs):
