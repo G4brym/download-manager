@@ -50,7 +50,7 @@ class File:
             creation_date=row["creation_date"],
             completed=row["completed"],
             completion_date=row["completion_date"],
-            headers=json.loads(row["headers"]) if row["headers"] else None,
+            headers=json.loads(row["headers"]) if row["headers"] else dict(),
         )
 
     @classmethod
@@ -65,7 +65,22 @@ class File:
             creation_date=record.creation_date,
             completed=record.completed,
             completion_date=record.completion_date,
-            headers=json.dumps(record.headers) if record.headers else None,
+            headers=json.dumps(record.headers) if record.headers else "{}",
+        )
+
+    @classmethod
+    def to_external(cls, record: "File") -> Dict:
+        return dict(
+            hash=record.__hash__(),
+            name=record.name,
+            path=record.path,
+            url=record.url,
+            failed=record.failed.value,
+            retries=record.retries,
+            creation_date=record.creation_date,
+            completed=record.completed,
+            completion_date=record.completion_date,
+            headers=record.headers,
         )
 
     def copy_with(self, **kwargs):

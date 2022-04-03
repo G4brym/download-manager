@@ -54,7 +54,7 @@ def file_download(files: List[DownloadDTOIn], file_download_uc: FileDownload):
         )
 
         if _result:
-            response.append(File.to_dict(_result))
+            response.append(File.to_external(_result))
 
     return response
 
