@@ -50,7 +50,7 @@ class File:
             creation_date=row["creation_date"],
             completed=row["completed"],
             completion_date=row["completion_date"],
-            headers=json.loads(row["headers"]) if row["headers"] else dict(),
+            headers=row["headers"] if row["headers"] else dict(),
         )
 
     @classmethod

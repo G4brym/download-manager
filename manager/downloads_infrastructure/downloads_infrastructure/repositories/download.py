@@ -60,7 +60,7 @@ class SmartDLDownloadRepository(DownloadRepository):
 
         except Exception as e:
             self.logger.warning(
-                "Download Failed with error 3 (UnknownError): {}".format(str(e))
+                "Download Failed with error 4 (UnknownError): {}".format(str(e))
             )
             return FailTypes.UnknownError
 
