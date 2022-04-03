@@ -8,3 +8,4 @@ class FailTypes(Enum):
     ServerError = 1
     ReachingError = 2
     LocalIOError = 3
+    UnknownError = 4

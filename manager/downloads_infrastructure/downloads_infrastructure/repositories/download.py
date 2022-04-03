@@ -58,5 +58,11 @@ class SmartDLDownloadRepository(DownloadRepository):
             )
             return FailTypes.LocalIOError
 
+        except Exception as e:
+            self.logger.warning(
+                "Download Failed with error 3 (UnknownError): {}".format(str(e))
+            )
+            return FailTypes.UnknownError
+
         finally:
             shutil.rmtree(tmp_folder, ignore_errors=True)
