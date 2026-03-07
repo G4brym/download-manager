@@ -1,4 +1,3 @@
-import sqlite3
 from typing import Optional
 
 from sqlify import Sqlite3Sqlify
@@ -24,24 +23,21 @@ class SqlFilesRepository(FilesRepository):
         return File.from_dict(obj)
 
     def save(self, file: File) -> None:
-        # TODO: fix this commit rollback structure
-        self._database.commit()
-        try:
-            self._database.insert(
-                table="downloads",
-                data=File.to_dict(file),
-            )
+        existing = self.get(file.hash)
 
-            self._database.commit()
-        except sqlite3.IntegrityError:
-            self._database.rollback()
+        if existing:
             self._database.update(
                 table="downloads",
                 where=("hash = :hash", dict(hash=file.hash)),
                 data=File.to_dict(file),
             )
+        else:
+            self._database.insert(
+                table="downloads",
+                data=File.to_dict(file),
+            )
 
-            self._database.commit()
+        self._database.commit()
 
     def retry_all(self) -> None:
         self._database.update(
