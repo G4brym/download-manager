@@ -35,7 +35,7 @@ class TaskDownloadFile:
             updated_file = file.copy_with(
                 completed=True,
                 failed=FailTypes.NoError,
-                creation_date=datetime.now(),
+                completion_date=datetime.now(),
             )
 
             self.logger.info("Download Finished")
