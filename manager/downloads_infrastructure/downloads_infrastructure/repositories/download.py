@@ -25,7 +25,7 @@ class SmartDLDownloadRepository(DownloadRepository):
             self.logger.warning(f"File {name} already exists in path {path}")
 
         try:
-            _tmp_headers = headers
+            _tmp_headers = dict(headers) if headers else {}
             _tmp_headers.setdefault("User-Agent", "DownloadManager 1.0")
 
             obj = SmartDL(
